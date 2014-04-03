@@ -217,7 +217,7 @@ namespace game
         }
     }
 
-    VARFP(slowmosp, 0, 0, 1, { if(m_sp && !slowmosp) server::forcegamespeed(100); }); 
+    VARFP(slowmosp, 0, 0, 1, { if(m_sp && !slowmosp) server::forcegamespeed(100); });
 
     void checkslowmo()
     {
@@ -458,7 +458,7 @@ namespace game
 
             showscores(true);
             disablezoom();
-            
+
             if(identexists("intermission")) execute("intermission");
         }
     }
@@ -602,7 +602,7 @@ namespace game
         else findplayerspawn(player1, -1);
         entities::resetspawns();
         copystring(clientmap, name ? name : "");
-        
+
         sendmapinfo();
     }
 
@@ -669,7 +669,7 @@ namespace game
 
     const char *colorname(fpsent *d, const char *name, const char *prefix, const char *suffix, const char *alt)
     {
-        if(!name) name = alt && d == player1 ? alt : d->name; 
+        if(!name) name = alt && d == player1 ? alt : d->name;
         bool dup = !name[0] || duplicatename(d, name, alt) || d->aitype != AI_NONE;
         if(dup || prefix[0] || suffix[0])
         {
@@ -686,7 +686,7 @@ namespace game
     const char *teamcolorname(fpsent *d, const char *alt)
     {
         if(!teamcolortext || !m_teammode) return colorname(d, NULL, "", "", alt);
-        return colorname(d, NULL, isteam(d->team, player1->team) ? "\fs\f1" : "\fs\f3", "\fr", alt); 
+        return colorname(d, NULL, isteam(d->team, player1->team) ? "\fs\f1" : "\fs\f3", "\fr", alt);
     }
 
     const char *teamcolor(const char *name, bool sameteam, const char *alt)
@@ -695,8 +695,8 @@ namespace game
         cidx = (cidx+1)%3;
         formatstring(cname[cidx])(sameteam ? "\fs\f1%s\fr" : "\fs\f3%s\fr", sameteam || !alt ? name : alt);
         return cname[cidx];
-    }    
-    
+    }
+
     const char *teamcolor(const char *name, const char *team, const char *alt)
     {
         return teamcolor(name, team && isteam(team, player1->team), alt);
@@ -709,7 +709,7 @@ namespace game
             if(d->state!=CS_ALIVE) return;
             fpsent *pl = (fpsent *)d;
             if(!m_mp(gamemode)) killed(pl, pl);
-            else 
+            else
             {
                 int seq = (pl->lifesequence<<16)|((lastmillis/1000)&0xFFFF);
                 if(pl->suicided!=seq) { addmsg(N_SUICIDE, "rc", pl); pl->suicided = seq; }
@@ -846,7 +846,7 @@ namespace game
             text_bounds(f ? colorname(f) : " ", fw, fh);
             fh = max(fh, ph);
             draw_text("SPECTATOR", w*1800/h - tw - pw, 1650 - th - fh);
-            if(f) 
+            if(f)
             {
                 int color = f->state!=CS_DEAD ? 0xFFFFFF : 0x606060;
                 if(f->privilege)
@@ -933,7 +933,7 @@ namespace game
         static const float struts[] =       { 7,       7,          12.5f,   14,      7,      8,         14,      7,       24.5f };
         if(size_t(i) >= sizeof(names)/sizeof(names[0])) return false;
         g->pushlist();
-        g->text(names[i], 0xFFFF80, !i ? " " : NULL);
+        g->text(names[i], 0xA0A0A0, !i ? " " : NULL);
         if(struts[i]) g->strut(struts[i]);
         g->mergehits(true);
         return true;
@@ -963,7 +963,7 @@ namespace game
             switch(i)
             {
                 case 0:
-                    if(g->button(" ", 0xFFFFDD, "serverunk")&G3D_UP) return true;
+                    if(g->button(" ", 0xFFFFFF, "serverunk")&G3D_UP) return true;
                     break;
 
                 case 1:
@@ -971,23 +971,23 @@ namespace game
                 case 3:
                 case 4:
                 case 5:
-                    if(g->button(" ", 0xFFFFDD)&G3D_UP) return true;
+                    if(g->button(" ", 0xFFFFFF)&G3D_UP) return true;
                     break;
 
                 case 6:
-                    if(g->buttonf("%s ", 0xFFFFDD, NULL, name)&G3D_UP) return true;
+                    if(g->buttonf("%s ", 0xFFFFFF, NULL, name)&G3D_UP) return true;
                     break;
 
                 case 7:
-                    if(g->buttonf("%d ", 0xFFFFDD, NULL, port)&G3D_UP) return true;
+                    if(g->buttonf("%d ", 0xFFFFFF, NULL, port)&G3D_UP) return true;
                     break;
 
                 case 8:
                     if(ping < 0)
                     {
-                        if(g->button(sdesc, 0xFFFFDD)&G3D_UP) return true;
+                        if(g->button(sdesc, 0xFFFFFF)&G3D_UP) return true;
                     }
-                    else if(g->buttonf("[%s protocol] ", 0xFFFFDD, NULL, attr.empty() ? "unknown" : (attr[0] < PROTOCOL_VERSION ? "older" : "newer"))&G3D_UP) return true;
+                    else if(g->buttonf("[%s protocol] ", 0xFFFFFF, NULL, attr.empty() ? "unknown" : (attr[0] < PROTOCOL_VERSION ? "older" : "newer"))&G3D_UP) return true;
                     break;
             }
             return false;
@@ -998,24 +998,24 @@ namespace game
             case 0:
             {
                 const char *icon = attr.inrange(3) && np >= attr[3] ? "serverfull" : (attr.inrange(4) ? mastermodeicon(attr[4], "serverunk") : "serverunk");
-                if(g->buttonf("%d ", 0xFFFFDD, icon, ping)&G3D_UP) return true;
+                if(g->buttonf("%d ", 0xFFFFFF, icon, ping)&G3D_UP) return true;
                 break;
             }
 
             case 1:
                 if(attr.length()>=4)
                 {
-                    if(g->buttonf(np >= attr[3] ? "\f3%d/%d " : "%d/%d ", 0xFFFFDD, NULL, np, attr[3])&G3D_UP) return true;
+                    if(g->buttonf(np >= attr[3] ? "\f3%d/%d " : "%d/%d ", 0xFFFFFF, NULL, np, attr[3])&G3D_UP) return true;
                 }
-                else if(g->buttonf("%d ", 0xFFFFDD, NULL, np)&G3D_UP) return true;
+                else if(g->buttonf("%d ", 0xFFFFFF, NULL, np)&G3D_UP) return true;
                 break;
 
             case 2:
-                if(g->buttonf("%s ", 0xFFFFDD, NULL, attr.length()>=2 ? server::modename(attr[1], "") : "")&G3D_UP) return true;
+                if(g->buttonf("%s ", 0xFFFFFF, NULL, attr.length()>=2 ? server::modename(attr[1], "") : "")&G3D_UP) return true;
                 break;
 
             case 3:
-                if(g->buttonf("%.25s ", 0xFFFFDD, NULL, map)&G3D_UP) return true;
+                if(g->buttonf("%.25s ", 0xFFFFFF, NULL, map)&G3D_UP) return true;
                 break;
 
             case 4:
@@ -1024,24 +1024,24 @@ namespace game
                     int secs = clamp(attr[2], 0, 59*60+59),
                         mins = secs/60;
                     secs %= 60;
-                    if(g->buttonf("%d:%02d ", 0xFFFFDD, NULL, mins, secs)&G3D_UP) return true;
+                    if(g->buttonf("%d:%02d ", 0xFFFFFF, NULL, mins, secs)&G3D_UP) return true;
                 }
-                else if(g->buttonf(" ", 0xFFFFDD)&G3D_UP) return true;
+                else if(g->buttonf(" ", 0xFFFFFF)&G3D_UP) return true;
                 break;
             case 5:
-                if(g->buttonf("%s%s ", 0xFFFFDD, NULL, attr.length()>=5 ? mastermodecolor(attr[4], "") : "", attr.length()>=5 ? server::mastermodename(attr[4], "") : "")&G3D_UP) return true;
+                if(g->buttonf("%s%s ", 0xFFFFFF, NULL, attr.length()>=5 ? mastermodecolor(attr[4], "") : "", attr.length()>=5 ? server::mastermodename(attr[4], "") : "")&G3D_UP) return true;
                 break;
 
             case 6:
-                if(g->buttonf("%s ", 0xFFFFDD, NULL, name)&G3D_UP) return true;
+                if(g->buttonf("%s ", 0xFFFFFF, NULL, name)&G3D_UP) return true;
                 break;
 
             case 7:
-                if(g->buttonf("%d ", 0xFFFFDD, NULL, port)&G3D_UP) return true;
+                if(g->buttonf("%d ", 0xFFFFFF, NULL, port)&G3D_UP) return true;
                 break;
 
             case 8:
-                if(g->buttonf("%.25s", 0xFFFFDD, NULL, sdesc)&G3D_UP) return true;
+                if(g->buttonf("%.25s", 0xFFFFFF, NULL, sdesc)&G3D_UP) return true;
                 break;
         }
         return false;

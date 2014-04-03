@@ -2,9 +2,9 @@
 
 #include "engine.h"
 
-#define GUI_TITLE_COLOR  0xFFDD88
+#define GUI_TITLE_COLOR  0xFFFFFF
 #define GUI_BUTTON_COLOR 0xFFFFFF
-#define GUI_TEXT_COLOR   0xDDFFDD
+#define GUI_TEXT_COLOR   0xFFFFFF
 
 static vec menupos;
 static int menustart = 0;
@@ -29,7 +29,7 @@ struct menu : g3d_callback
         cgui = NULL;
     }
 
-    virtual void clear() 
+    virtual void clear()
     {
         if(onclear) { freecode(onclear); onclear = NULL; }
     }
@@ -80,7 +80,7 @@ struct delayedupdate
             default: return 0;
         }
     }
-   
+
     const char *getstring() const
     {
         switch(type)
@@ -104,7 +104,7 @@ struct delayedupdate
         }
     }
 };
-     
+
 static hashtable<const char *, menu> guis;
 static vector<menu *> guistack;
 static vector<delayedupdate> updatelater;
@@ -114,7 +114,7 @@ VARP(menudistance,  16, 40,  256);
 VARP(menuautoclose, 32, 120, 4096);
 
 vec menuinfrontofplayer()
-{ 
+{
     vec dir;
     vecfromyawpitch(camera1->yaw, 0, 1, 0, dir);
     dir.mul(menudistance).add(camera1->o);
@@ -136,7 +136,7 @@ void removegui(menu *m)
         m->clear();
         return;
     }
-}    
+}
 
 void pushgui(menu *m, int pos = -1)
 {
@@ -177,17 +177,17 @@ void hidegui(const char *name)
     menu *m = guis.access(name);
     if(m) removegui(m);
 }
- 
+
 int cleargui(int n)
 {
     int clear = guistack.length();
-    if(mainmenu && !isconnected(true) && clear > 0 && guistack[0]->name && !strcmp(guistack[0]->name, "main")) 
+    if(mainmenu && !isconnected(true) && clear > 0 && guistack[0]->name && !strcmp(guistack[0]->name, "main"))
     {
         clear--;
         if(!clear) return 1;
     }
     if(n>0) clear = min(clear, n);
-    loopi(clear) popgui(); 
+    loopi(clear) popgui();
     if(!guistack.empty()) restoregui(guistack.length()-1);
     return clear;
 }
@@ -213,7 +213,7 @@ void guionclear(char *action)
 {
     if(guistack.empty()) return;
     menu *m = guistack.last();
-    if(m->onclear) { freecode(m->onclear); m->onclear = NULL; } 
+    if(m->onclear) { freecode(m->onclear); m->onclear = NULL; }
     if(action[0]) m->onclear = compilecode(action);
 }
 
@@ -247,7 +247,7 @@ void guibutton(char *name, char *action, char *icon)
     if(!cgui) return;
     bool hideicon = !strcmp(icon, "0");
     int ret = cgui->button(name, GUI_BUTTON_COLOR, hideicon ? NULL : (icon[0] ? icon : (strstr(action, "showgui") ? "menu" : "action")));
-    if(ret&G3D_UP) 
+    if(ret&G3D_UP)
     {
         updatelater.add().schedule(action[0] ? action : name);
         if(shouldclearmenu) clearlater = true;
@@ -286,8 +286,8 @@ void guiimage(char *path, char *action, float *scale, int *overlaid, char *alt)
 
 void guicolor(int *color)
 {
-    if(cgui) 
-    {   
+    if(cgui)
+    {
         defformatstring(desc)("0x%06X", *color);
         cgui->text(desc, *color, NULL);
     }
@@ -462,11 +462,11 @@ void guibitfield(char *name, char *var, int *mask, char *onchange)
 
 //-ve length indicates a wrapped text field of any (approx 260 chars) length, |length| is the field width
 void guifield(char *var, int *maxlength, char *onchange)
-{   
+{
     if(!cgui) return;
     const char *initval = getsval(var);
 	char *result = cgui->field(var, GUI_BUTTON_COLOR, *maxlength ? *maxlength : 12, 0, initval);
-    if(result) updateval(var, result, onchange); 
+    if(result) updateval(var, result, onchange);
 }
 
 //-ve maxlength indicates a wrapped text field of any (approx 260 chars) length, |maxlength| is the field width
@@ -503,7 +503,7 @@ void guialign(int *align, uint *contents)
     cgui->pushlist();
     if(*align >= 0) cgui->spring();
     execute(contents);
-    if(*align == 0) cgui->spring(); 
+    if(*align == 0) cgui->spring();
     cgui->poplist();
 }
 
@@ -551,7 +551,7 @@ menu *guiserversmenu = NULL;
 void guiservers(uint *header, int *pagemin, int *pagemax)
 {
     extern const char *showservers(g3d_gui *cgui, uint *header, int pagemin, int pagemax);
-    if(cgui) 
+    if(cgui)
     {
         const char *command = showservers(cgui, header, *pagemin, *pagemax > 0 ? *pagemax : INT_MAX);
         if(command)
@@ -571,7 +571,7 @@ void notifywelcome()
         guiserversmenu = NULL;
     }
 }
- 
+
 COMMAND(newgui, "ssss");
 COMMAND(guibutton, "sss");
 COMMAND(guitext, "ss");
@@ -626,7 +626,7 @@ void guimodelpreview(char *model, char *animspec, char *action, float *scale, in
     int anim = ANIM_ALL;
     if(animspec[0])
     {
-        if(isdigit(animspec[0])) 
+        if(isdigit(animspec[0]))
         {
             anim = parseint(animspec);
             if(anim >= 0) anim %= ANIM_INDEX;
@@ -725,7 +725,7 @@ void menuprocess()
     updatelater.shrink(0);
     if(wasmain > mainmenu || clearlater)
     {
-        if(wasmain > mainmenu || level==guistack.length()) clearguis(level); 
+        if(wasmain > mainmenu || level==guistack.length()) clearguis(level);
         clearlater = false;
     }
     if(mainmenu && !isconnected(true) && guistack.empty()) showgui("main");
@@ -745,8 +745,8 @@ void clearmainmenu()
 
 void g3d_mainmenu()
 {
-    if(!guistack.empty()) 
-    {   
+    if(!guistack.empty())
+    {
         extern int usegui2d;
         if(!mainmenu && !usegui2d && camera1->o.dist(menupos) > menuautoclose) cleargui();
         else g3d_addgui(guistack.last(), menupos, GUI_2D | GUI_FOLLOW);
